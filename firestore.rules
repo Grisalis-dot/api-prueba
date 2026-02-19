@@ -4,106 +4,97 @@ rules_version = '2';
  * FIRESTORE SECURITY RULES - PROTOTYPING MODE
  * 
  * CORE PHILOSOPHY:
- * This ruleset implements a strict Role-Based Access Control (RBAC) model. Access to sensitive 
- * IT asset data is restricted to users who have been explicitly granted administrative 
- * privileges. 
+ * This ruleset implements a Role-Based Access Control (RBAC) model combined with authenticated 
+ * global read access. While data shapes are flexible to support rapid development, 
+ * authorization is strictly enforced based on the user's authentication status and 
+ * administrative roles.
  * 
  * DATA STRUCTURE:
- * - /assets/{assetId}: A top-level collection containing all IT assets ('Notas'). 
- * - /roles_admin/{userId}: A lookup collection where the existence of a document 
- *   mapping to a user's UID identifies them as an administrator.
+ * - /assets/{assetId}: Global repository for IT assets.
+ * - /roles_admin/{uid}: A flat collection where the presence of a UID document grants admin privileges.
  * 
  * KEY SECURITY DECISIONS:
- * 1. Global Role Authorization: Instead of checking ownership on individual assets, we 
- *    use a "DBAC" (Database-Based Access Control) pattern. A helper function `isAdmin()` 
- *    checks for the existence of a record in the `/roles_admin` collection.
- * 2. Administrative Lockdown: The IT asset collection is completely invisible and 
- *    inaccessible to non-admin users. This ensures data privacy for the organization.
- * 3. Existence over Content: For the `roles_admin` collection, the document's ID is 
- *    the primary source of truth. The content of the document is irrelevant for 
- *    authorization; only its existence matters.
- * 4. Path-to-Data Consistency: We enforce that the 'id' field within an Asset document 
- *    matches its Firestore Document ID to ensure relational integrity during creation.
+ * 1. Role-Based Writes: Since the 'Asset' entity lacks specific ownership fields (like ownerId), 
+ *    write operations (create, update, delete) are restricted to users identified as administrators 
+ *    via the /roles_admin collection.
+ * 2. Authenticated Reads: Assets are visible to any signed-in user, supporting a transparent 
+ *    internal IT catalog.
+ * 3. Authorization Independence: Admin status is determined by document existence in a dedicated 
+ *    collection, avoiding complex nested lookups or custom claims.
+ * 4. Relational Integrity: On creation, the rules enforce that the internal 'id' field of an 
+ *    asset matches its document ID in the path.
+ * 
+ * DENORMALIZATION FOR AUTHORIZATION:
+ * - Admin roles are stored in a top-level collection (/roles_admin) to allow for simple exists() 
+ *   checks during write operations on other collections.
  */
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // --- HELPER FUNCTIONS ---
+    // --- GLOBAL HELPER FUNCTIONS ---
 
-    /**
+    /** 
      * @description Checks if the request is made by an authenticated user.
      */
     function isSignedIn() {
       return request.auth != null;
     }
 
-    /**
-     * @description Checks if the authenticated user has administrative privileges 
-     * by looking for their UID in the roles_admin collection.
+    /** 
+     * @description Checks if the authenticated user has an entry in the roles_admin collection.
      */
     function isAdmin() {
       return isSignedIn() && exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
     }
 
-    /**
-     * @description Verifies if a user is the owner of a specific resource based on UID.
+    /** 
+     * @description Combines admin check with a verification that the resource exists.
+     * Used for update and delete operations.
      */
-    function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
+    function isExistingAdmin() {
+      return isAdmin() && resource != null;
     }
 
     // --- COLLECTION RULES ---
 
     /**
-     * @description Rules for the admin roles collection. Admins can manage roles, 
-     * and users can check their own role status.
-     * @path /roles_admin/{userId}
-     * @allow (get) If the user is checking their own admin status or is already an admin.
-     * @deny (create) If the requester is not an existing admin (prevents self-promotion).
-     * @principle Role-based access control via existence check.
+     * @description Primary storage for IT Asset entities. Accessible to all users for reading, 
+     * but restricted to administrators for any modifications.
+     * @path /assets/{assetId}
+     * @allow (get/list) if user is signed in.
+     * @allow (create/update/delete) if user's UID exists in /roles_admin.
+     * @deny (write) if user is not an administrator.
+     * @principle Role-based access control for resource management.
      */
-    match /roles_admin/{userId} {
-      allow get: if isSignedIn() && (isOwner(userId) || isAdmin());
-      allow list: if isAdmin();
-      allow create: if isAdmin();
-      allow update: if isAdmin();
-      allow delete: if isAdmin();
+    match /assets/{assetId} {
+      allow get, list: if isSignedIn();
+      allow create: if isAdmin() && request.resource.data.id == assetId;
+      allow update: if isExistingAdmin() && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingAdmin();
     }
 
     /**
-     * @description Rules for the IT Assets (Notas) collection. Access is strictly limited to admins.
-     * @path /assets/{assetId}
-     * @allow (list) If the user is an admin.
-     * @deny (get) If the user is authenticated but does not have the admin role.
-     * @principle Admin-only CRUD operations for organizational data.
+     * @description Registry of administrative users. The existence of a document here 
+     * grants system-wide write permissions.
+     * @path /roles_admin/{uid}
+     * @allow (get) if user is checking their own admin status.
+     * @allow (list) if user is an existing administrator.
+     * @deny (write) via client SDK; admin roles should be managed via Admin SDK or Console.
+     * @principle Database-level role flags for authorization independence.
      */
-    match /assets/{assetId} {
-      // READ permissions: Only admins can view or list assets.
-      allow get, list: if isAdmin();
-
-      // WRITE permissions: Only admins can modify assets.
-      allow create: if isAdmin() && isConsistentPath(assetId);
-      allow update: if isAdmin() && isExistingAsset() && isIdImmutable();
-      allow delete: if isAdmin() && isExistingAsset();
-
-      // --- ASSET HELPERS ---
-
-      // Ensures the document exists before update/delete.
-      function isExistingAsset() {
-        return resource != null;
-      }
-
-      // Validates that the internal ID matches the document ID on creation.
-      function isConsistentPath(assetId) {
-        return request.resource.data.id == assetId;
-      }
-
-      // Ensures the ID field cannot be changed after creation.
-      function isIdImmutable() {
-        return request.resource.data.id == resource.data.id;
-      }
+    match /roles_admin/{uid} {
+      allow get: if isSignedIn() && request.auth.uid == uid;
+      allow list: if isAdmin();
+      // Writes are denied by default to prevent users from escalating their own privileges.
+      // Admin roles should be assigned through secure backend processes.
+      allow create, update, delete: if false;
     }
-    
+
+    // --- DEFAULT DENY ---
+    // Explicitly deny access to any other collections not defined above.
+    match /{path=**} {
+      allow read, write: if false;
+    }
   }
 }
