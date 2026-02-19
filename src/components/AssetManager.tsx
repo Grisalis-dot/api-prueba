@@ -35,9 +35,11 @@ export function AssetManager() {
       if (res.ok && Array.isArray(data)) {
         setAssets(data);
       } else {
+        setAssets([]);
         throw new Error(data.error || 'Respuesta inesperada del servidor');
       }
     } catch (error) {
+      setAssets([]);
       toast({
         title: 'Error',
         description: 'No se pudieron cargar los activos.',
@@ -57,7 +59,7 @@ export function AssetManager() {
     try {
       const res = await fetch(`/api/assets/${id}`, { method: 'DELETE' });
       if (res.ok) {
-        setAssets(prev => prev.filter(a => a.id !== id));
+        setAssets(prev => Array.isArray(prev) ? prev.filter(a => a.id !== id) : []);
         toast({ title: 'Éxito', description: 'Activo eliminado correctamente.' });
       }
     } catch (error) {
@@ -65,10 +67,12 @@ export function AssetManager() {
     }
   };
 
-  const filteredAssets = Array.isArray(assets) ? assets.filter(a => 
-    a.titulo.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    a.marca.toLowerCase().includes(searchTerm.toLowerCase())
-  ) : [];
+  const filteredAssets = Array.isArray(assets) 
+    ? assets.filter(a => 
+        (a.titulo?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
+        (a.marca?.toLowerCase() || '').includes(searchTerm.toLowerCase())
+      ) 
+    : [];
 
   return (
     <div className="space-y-6">
@@ -98,15 +102,15 @@ export function AssetManager() {
               <CardHeader className="pb-2">
                 <div className="flex justify-between items-start">
                   <div className="p-2 bg-secondary rounded-lg">
-                    {asset.titulo.toLowerCase().includes('servidor') ? <Server className="h-5 w-5 text-accent" /> : 
-                     asset.titulo.toLowerCase().includes('base') ? <Database className="h-5 w-5 text-accent" /> :
+                    {asset.titulo?.toLowerCase().includes('servidor') ? <Server className="h-5 w-5 text-accent" /> : 
+                     asset.titulo?.toLowerCase().includes('base') ? <Database className="h-5 w-5 text-accent" /> :
                      <Laptop className="h-5 w-5 text-accent" />}
                   </div>
                   <Badge variant="outline" className="text-xs uppercase font-bold tracking-wider">{asset.marca}</Badge>
                 </div>
                 <CardTitle className="mt-4 line-clamp-1">{asset.titulo}</CardTitle>
                 <CardDescription className="text-xs">
-                  ID: {asset.id.split('-')[0]}... • {format(new Date(asset.fecha_creacion), 'dd MMM yyyy')}
+                  ID: {asset.id?.split('-')[0]}... • {asset.fecha_creacion ? format(new Date(asset.fecha_creacion), 'dd MMM yyyy') : 'N/A'}
                 </CardDescription>
               </CardHeader>
               <CardContent>
