@@ -31,7 +31,12 @@ export function AssetManager() {
     try {
       const res = await fetch('/api/assets');
       const data = await res.json();
-      setAssets(data);
+      
+      if (res.ok && Array.isArray(data)) {
+        setAssets(data);
+      } else {
+        throw new Error(data.error || 'Respuesta inesperada del servidor');
+      }
     } catch (error) {
       toast({
         title: 'Error',
@@ -52,7 +57,7 @@ export function AssetManager() {
     try {
       const res = await fetch(`/api/assets/${id}`, { method: 'DELETE' });
       if (res.ok) {
-        setAssets(assets.filter(a => a.id !== id));
+        setAssets(prev => prev.filter(a => a.id !== id));
         toast({ title: 'Éxito', description: 'Activo eliminado correctamente.' });
       }
     } catch (error) {
@@ -60,10 +65,10 @@ export function AssetManager() {
     }
   };
 
-  const filteredAssets = assets.filter(a => 
+  const filteredAssets = Array.isArray(assets) ? assets.filter(a => 
     a.titulo.toLowerCase().includes(searchTerm.toLowerCase()) || 
     a.marca.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  ) : [];
 
   return (
     <div className="space-y-6">
