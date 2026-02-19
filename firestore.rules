@@ -1,0 +1,109 @@
+rules_version = '2';
+
+/**
+ * FIRESTORE SECURITY RULES - PROTOTYPING MODE
+ * 
+ * CORE PHILOSOPHY:
+ * This ruleset implements a strict Role-Based Access Control (RBAC) model. Access to sensitive 
+ * IT asset data is restricted to users who have been explicitly granted administrative 
+ * privileges. 
+ * 
+ * DATA STRUCTURE:
+ * - /assets/{assetId}: A top-level collection containing all IT assets ('Notas'). 
+ * - /roles_admin/{userId}: A lookup collection where the existence of a document 
+ *   mapping to a user's UID identifies them as an administrator.
+ * 
+ * KEY SECURITY DECISIONS:
+ * 1. Global Role Authorization: Instead of checking ownership on individual assets, we 
+ *    use a "DBAC" (Database-Based Access Control) pattern. A helper function `isAdmin()` 
+ *    checks for the existence of a record in the `/roles_admin` collection.
+ * 2. Administrative Lockdown: The IT asset collection is completely invisible and 
+ *    inaccessible to non-admin users. This ensures data privacy for the organization.
+ * 3. Existence over Content: For the `roles_admin` collection, the document's ID is 
+ *    the primary source of truth. The content of the document is irrelevant for 
+ *    authorization; only its existence matters.
+ * 4. Path-to-Data Consistency: We enforce that the 'id' field within an Asset document 
+ *    matches its Firestore Document ID to ensure relational integrity during creation.
+ */
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- HELPER FUNCTIONS ---
+
+    /**
+     * @description Checks if the request is made by an authenticated user.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * @description Checks if the authenticated user has administrative privileges 
+     * by looking for their UID in the roles_admin collection.
+     */
+    function isAdmin() {
+      return isSignedIn() && exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+    }
+
+    /**
+     * @description Verifies if a user is the owner of a specific resource based on UID.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // --- COLLECTION RULES ---
+
+    /**
+     * @description Rules for the admin roles collection. Admins can manage roles, 
+     * and users can check their own role status.
+     * @path /roles_admin/{userId}
+     * @allow (get) If the user is checking their own admin status or is already an admin.
+     * @deny (create) If the requester is not an existing admin (prevents self-promotion).
+     * @principle Role-based access control via existence check.
+     */
+    match /roles_admin/{userId} {
+      allow get: if isSignedIn() && (isOwner(userId) || isAdmin());
+      allow list: if isAdmin();
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    /**
+     * @description Rules for the IT Assets (Notas) collection. Access is strictly limited to admins.
+     * @path /assets/{assetId}
+     * @allow (list) If the user is an admin.
+     * @deny (get) If the user is authenticated but does not have the admin role.
+     * @principle Admin-only CRUD operations for organizational data.
+     */
+    match /assets/{assetId} {
+      // READ permissions: Only admins can view or list assets.
+      allow get, list: if isAdmin();
+
+      // WRITE permissions: Only admins can modify assets.
+      allow create: if isAdmin() && isConsistentPath(assetId);
+      allow update: if isAdmin() && isExistingAsset() && isIdImmutable();
+      allow delete: if isAdmin() && isExistingAsset();
+
+      // --- ASSET HELPERS ---
+
+      // Ensures the document exists before update/delete.
+      function isExistingAsset() {
+        return resource != null;
+      }
+
+      // Validates that the internal ID matches the document ID on creation.
+      function isConsistentPath(assetId) {
+        return request.resource.data.id == assetId;
+      }
+
+      // Ensures the ID field cannot be changed after creation.
+      function isIdImmutable() {
+        return request.resource.data.id == resource.data.id;
+      }
+    }
+    
+  }
+}
