@@ -1,0 +1,19 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Asset {
+  id             String   @id @default(uuid())
+  titulo         String
+  cuerpo         String
+  marca          String
+  fecha_creacion DateTime @default(now())
+
+  @@map("assets")
+}
