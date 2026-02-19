@@ -1,61 +1,75 @@
 
-# Asset API - IT Infrastructure Management
+# 🚀 IT Asset Management API - Prueba Técnica
 
-Profesional REST API diseñada para el control de activos de IT, implementada con Next.js (Node.js), Prisma ORM y PostgreSQL.
+Este proyecto es una solución integral para la gestión de activos de infraestructura IT, diseñada para cumplir con los requerimientos de una evaluación técnica para perfiles de Base de Datos e Infraestructura.
 
-## 🚀 Despliegue Local (Docker)
+## 📝 Descripción del Proyecto
+La aplicación permite administrar un inventario de activos tecnológicos (servidores, equipos, bases de datos, etc.). Implementa una arquitectura moderna con:
+- **Backend:** Next.js API Routes (Node.js).
+- **Base de Datos:** PostgreSQL con Prisma ORM.
+- **Frontend:** Dashboard profesional con React, Shadcn/UI y Tailwind CSS.
+- **Validación:** Esquemas de datos con Zod.
 
-La forma más rápida de levantar el entorno completo (API + DB) es usando Docker Compose:
+## 🛠 Requerimientos Implementados
+- [x] **CRUD Completo:** Crear, Leer, Editar y Eliminar activos.
+- [x] **Campos obligatorios:** Título, Cuerpo y Marca.
+- [x] **Suite de Pruebas:** 5 pruebas de integración automatizadas.
+- [x] **Dockerizado:** Listo para despliegue consistente.
+
+---
+
+## 📖 Guía para el Reclutador (Cómo probar la API)
+
+### 1. Despliegue Local (Recomendado)
+La forma más sencilla de evaluar el proyecto es usando **Docker**:
 
 ```bash
 docker-compose up --build
 ```
+La aplicación estará disponible en `http://localhost:3000`.
 
-Esto levantará la API en `http://localhost:3000` y una instancia de PostgreSQL.
+### 2. Uso de la Interfaz (UI)
+- Al ingresar, verás el **Dashboard de Activos**.
+- Haz clic en **"Nuevo Activo"** para registrar uno.
+- Prueba la **barra de búsqueda** para filtrar por marca o título en tiempo real.
+- Las opciones de **Editar** y **Eliminar** aparecen al pasar el mouse sobre cada tarjeta.
 
-### Requisitos Manuales
-1. Instalar dependencias: `npm install`
-2. Configurar `.env` con `DATABASE_URL`
-3. Sincronizar DB: `npx prisma db push`
-4. Iniciar: `npm run dev`
+### 3. Pruebas de la API (Endpoints REST)
+Si prefieres probar los endpoints directamente (vía Postman o cURL):
 
-## 🛠 Endpoints de la API
+| Método | Endpoint | Acción |
+|--------|----------|--------|
+| **GET** | `/api/assets` | Lista todos los activos en formato JSON. |
+| **POST** | `/api/assets` | Crea un activo. Body: `{"titulo": "...", "cuerpo": "...", "marca": "..."}` |
+| **GET** | `/api/assets/{id}` | Obtiene el detalle de un activo específico. |
+| **PUT** | `/api/assets/{id}` | Actualiza un activo existente. |
+| **DELETE** | `/api/assets/{id}` | Elimina un activo del sistema. |
 
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| **POST** | `/api/assets` | Crea un nuevo activo |
-| **GET** | `/api/assets` | Lista todos los activos |
-| **GET** | `/api/assets/{id}` | Obtiene un activo por UUID |
-| **PUT** | `/api/assets/{id}` | Actualiza un activo |
-| **DELETE** | `/api/assets/{id}` | Elimina un activo |
+---
 
-### Ejemplo de Payload (POST/PUT)
-```json
-{
-  "titulo": "Servidor Linux Proliant",
-  "cuerpo": "Servidor de base de datos principal con 64GB RAM.",
-  "marca": "HP"
-}
-```
+## 🧪 Suite de Pruebas (5 Pruebas Requeridas)
+Se han implementado pruebas de integración que validan el flujo completo del servicio. Para ejecutarlas:
 
-## 🧪 Pruebas
-Ejecuta la suite de pruebas unitarias e integración con:
+1. Asegúrate de que el servidor esté corriendo.
+2. Ejecuta:
 ```bash
 npm test
 ```
-*Nota: Asegúrate de tener el servidor corriendo para las pruebas de integración.*
+**Pruebas incluidas:**
+1. `POST /assets`: Creación exitosa.
+2. `GET /assets`: Listado correcto de la colección.
+3. `GET /assets/{id}`: Recuperación de un activo específico.
+4. `GET /assets/{id}`: Validación de error 404 (activo inexistente).
+5. `DELETE /assets/{id}`: Eliminación exitosa y persistencia.
 
-## ☁️ Despliegue en la Nube (Cloud)
+---
 
-### Render / Railway
-1. Conecta este repositorio.
-2. Crea una base de datos PostgreSQL en el panel de control.
-3. Configura la variable de entorno `DATABASE_URL` en el servicio de la API.
-4. Comando de Build: `npm run build`
-5. Comando de Start: `npm run start`
+## ☁️ Instrucciones de Hosting
+Este servicio está optimizado para ser hosteado en:
+- **Railway / Render:** Solo necesitas conectar el repositorio y configurar la variable `DATABASE_URL` con tu instancia de PostgreSQL.
+- **Vercel:** Ideal para el frontend y las Serverless Functions de la API.
 
-## 🛡 Calidad y Estructura
-- **Validación:** Uso de `Zod` para esquemas de datos.
-- **ORM:** `Prisma` para migraciones y consultas tipadas.
-- **UI:** Dashboard profesional con `shadcn/ui` y `Tailwind CSS`.
-- **Logging:** Manejo de errores global y logs de base de datos.
+---
+**Candidato:** [Tu Nombre]
+**Puesto:** Base de Datos / Infraestructura
+**Tiempo de implementación:** ~3 horas
