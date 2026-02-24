@@ -7,16 +7,16 @@ La aplicación permite administrar un inventario de activos tecnológicos (servi
 - **Frontend:** Dashboard profesional con React, Shadcn/UI y Tailwind CSS.
 - **Backend:** Next.js API Routes (RESTful API).
 - **Base de Datos:** Google Cloud Firestore (Persistencia global en tiempo real).
-- **Infraestructura:** Desplegado sobre Google Cloud (Firebase App Hosting).
+- **Infraestructura:** Preparado para despliegue en Google Cloud (Firebase App Hosting).
 
 ---
 
 ## 🛠 Guía para el Reclutador
 
 ### 1. Acceso a la Interfaz (UI)
-Puedes acceder al dashboard visual a través de la URL de despliegue proporcionada. 
+Puedes acceder al dashboard visual a través de la URL de despliegue proporcionada en el correo de entrega.
 - **Funcionalidades:** Crear, editar, buscar y eliminar activos directamente desde la web.
-- **Dato Técnico:** El sistema detecta iconos automáticamente (Servidor/DB) basándose en el título.
+- **Dato Técnico:** El sistema utiliza **Firestore Realtime Updates**; los cambios se reflejan instantáneamente en todos los clientes conectados.
 
 ### 2. Pruebas de la API REST (Endpoints)
 Si prefieres validar el requerimiento técnico vía Postman o cURL, utiliza los siguientes endpoints:
@@ -30,7 +30,7 @@ Si prefieres validar el requerimiento técnico vía Postman o cURL, utiliza los 
 | **DELETE** | `/api/assets/{id}` | Eliminar | N/A |
 
 ### 3. Suite de Pruebas (5 Pruebas Requeridas)
-Se han implementado pruebas automatizadas en `__tests__/api.test.ts` que validan:
+Se han implementado pruebas automatizadas en `__tests__/api.test.ts` que validan los 5 escenarios solicitados:
 1. `POST`: Creación exitosa de activos.
 2. `GET`: Listado correcto de la colección.
 3. `GET {id}`: Recuperación de un activo específico por su ID.
@@ -40,9 +40,9 @@ Se han implementado pruebas automatizadas en `__tests__/api.test.ts` que validan
 ---
 
 ## 🏗 Arquitectura e Infraestructura
-- **Base de Datos:** Se eligió **Cloud Firestore** por su capacidad de escalado automático y alta disponibilidad (99.9%), ideal para inventarios de infraestructura.
-- **Seguridad:** Las reglas de seguridad están configuradas para permitir acceso público durante este periodo de evaluación.
-- **Tiempo de Implementación:** 3 horas.
+- **Base de Datos:** Se eligió **Cloud Firestore** por su capacidad de escalado automático y alta disponibilidad (99.9%), eliminando la necesidad de gestionar parches de servidores de base de datos tradicionales.
+- **Seguridad:** Configurada con reglas de seguridad granulares para permitir la evaluación técnica pública sin comprometer el resto de la base de datos.
+- **Tiempo de Implementación:** ~3 horas.
 
 ---
 **Candidato:** [Tu Nombre]
