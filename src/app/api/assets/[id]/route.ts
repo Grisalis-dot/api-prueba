@@ -3,6 +3,9 @@ import { initializeFirebase } from '@/firebase';
 import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { assetSchema } from '@/lib/validations/asset';
 
+/**
+ * GET /api/assets/[id]
+ */
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
@@ -22,6 +25,9 @@ export async function GET(
   }
 }
 
+/**
+ * PUT /api/assets/[id]
+ */
 export async function PUT(
   request: Request,
   { params }: { params: { id: string } }
@@ -32,6 +38,12 @@ export async function PUT(
     const { firestore } = initializeFirebase();
     
     const docRef = doc(firestore, 'assets', params.id);
+    const snapshot = await getDoc(docRef);
+
+    if (!snapshot.exists()) {
+      return NextResponse.json({ error: 'Activo no encontrado' }, { status: 404 });
+    }
+
     await updateDoc(docRef, validatedData);
 
     return NextResponse.json({ id: params.id, ...validatedData });
@@ -40,6 +52,9 @@ export async function PUT(
   }
 }
 
+/**
+ * DELETE /api/assets/[id]
+ */
 export async function DELETE(
   request: Request,
   { params }: { params: { id: string } }
@@ -47,6 +62,12 @@ export async function DELETE(
   try {
     const { firestore } = initializeFirebase();
     const docRef = doc(firestore, 'assets', params.id);
+    const snapshot = await getDoc(docRef);
+
+    if (!snapshot.exists()) {
+      return NextResponse.json({ error: 'Activo no encontrado' }, { status: 404 });
+    }
+
     await deleteDoc(docRef);
 
     return new NextResponse(null, { status: 204 });

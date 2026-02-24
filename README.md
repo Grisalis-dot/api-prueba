@@ -1,55 +1,49 @@
-# 🚀 IT Asset Management API - Prueba Técnica (Hosted)
+# 🚀 IT Asset Management API - Prueba Técnica (Senior)
 
-Este proyecto es una solución integral para la gestión de activos de infraestructura IT, diseñada para cumplir con los requerimientos de una evaluación técnica senior de Base de Datos e Infraestructura.
+Esta es una solución integral para la gestión de activos de infraestructura IT, diseñada para cumplir con los requerimientos de evaluación técnica para el puesto de **Base de Datos / Infraestructura**.
 
-## 📝 Descripción del Proyecto
-La aplicación permite administrar un inventario de activos tecnológicos (servidores, equipos, bases de datos, etc.). Implementa una arquitectura moderna **Serverless**:
+## 📝 Descripción
+La aplicación permite administrar un inventario de activos tecnológicos (servidores, equipos, bases de datos, etc.). Implementa una arquitectura **Serverless** moderna:
 - **Frontend:** Dashboard profesional con React, Shadcn/UI y Tailwind CSS.
-- **Backend:** Next.js API Routes (para compatibilidad REST).
-- **Base de Datos:** Google Cloud Firestore (Base de datos en tiempo real y global).
-- **Hosting:** Firebase App Hosting.
+- **Backend:** Next.js API Routes (RESTful API).
+- **Base de Datos:** Google Cloud Firestore (Persistencia global en tiempo real).
+- **Infraestructura:** Desplegado sobre Google Cloud (Firebase App Hosting).
 
 ---
 
-## 📖 Guía para el Reclutador (Pruebas en Línea)
+## 🛠 Guía para el Reclutador
 
-### 1. Acceso Directo (Producción)
-Puedes probar la aplicación directamente en la URL proporcionada en el despliegue de Firebase App Hosting.
+### 1. Acceso a la Interfaz (UI)
+Puedes acceder al dashboard visual a través de la URL de despliegue proporcionada. 
+- **Funcionalidades:** Crear, editar, buscar y eliminar activos directamente desde la web.
+- **Dato Técnico:** El sistema detecta iconos automáticamente (Servidor/DB) basándose en el título.
 
-### 2. Uso de la Interfaz (UI)
-- **Gestión CRUD:** Crea, edita y elimina notas de activos en tiempo real.
-- **Barra de búsqueda:** Filtra instantáneamente por marca o título.
-- **Iconografía Dinámica:** El sistema detecta automáticamente si el activo es un Servidor o DB según el título.
+### 2. Pruebas de la API REST (Endpoints)
+Si prefieres validar el requerimiento técnico vía Postman o cURL, utiliza los siguientes endpoints:
 
-### 3. Pruebas de la API (Endpoints REST)
-Si deseas validar el requerimiento de la API directamente (vía Postman o cURL):
+| Método | Endpoint | Acción | Cuerpo (JSON) |
+|--------|----------|--------|---------------|
+| **GET** | `/api/assets` | Listar todos | N/A |
+| **POST** | `/api/assets` | Crear activo | `{"titulo": "Servidor Linux", "cuerpo": "Ubuntu 22.04", "marca": "Dell"}` |
+| **GET** | `/api/assets/{id}` | Ver detalle | N/A |
+| **PUT** | `/api/assets/{id}` | Actualizar | `{"titulo": "Update", "cuerpo": "...", "marca": "..."}` |
+| **DELETE** | `/api/assets/{id}` | Eliminar | N/A |
 
-| Método | Endpoint | Acción |
-|--------|----------|--------|
-| **GET** | `/api/assets` | Lista todos los activos en JSON. |
-| **POST** | `/api/assets` | Crea un activo. Body: `{"titulo": "...", "cuerpo": "...", "marca": "..."}` |
-| **GET** | `/api/assets/{id}` | Obtiene el detalle de un activo. |
-| **PUT** | `/api/assets/{id}` | Actualiza un activo existente. |
-| **DELETE** | `/api/assets/{id}` | Elimina un activo. |
-
----
-
-## 🧪 Suite de Pruebas (5 Pruebas Requeridas)
-Se han implementado pruebas de integración automáticas en `__tests__/api.test.ts` que validan:
-1. `POST /assets`: Creación exitosa.
-2. `GET /assets`: Listado correcto de la colección.
-3. `GET /assets/{id}`: Recuperación de un activo específico.
-4. `GET /assets/{id}`: Validación de error 404 (ID inexistente).
-5. `DELETE /assets/{id}`: Eliminación y verificación de persistencia.
+### 3. Suite de Pruebas (5 Pruebas Requeridas)
+Se han implementado pruebas automatizadas en `__tests__/api.test.ts` que validan:
+1. `POST`: Creación exitosa de activos.
+2. `GET`: Listado correcto de la colección.
+3. `GET {id}`: Recuperación de un activo específico por su ID.
+4. `GET {error}`: Manejo de error 404 para IDs inexistentes.
+5. `DELETE`: Persistencia de la eliminación.
 
 ---
 
-## 🛠 Arquitectura e Infraestructura
-- **Seguridad:** Reglas de base de datos (`firestore.rules`) que garantizan la integridad.
-- **Escalabilidad:** Al ser Serverless, la infraestructura escala automáticamente de 0 a millones de peticiones.
-- **Persistencia:** Google Cloud garantiza 99.9% de disponibilidad.
+## 🏗 Arquitectura e Infraestructura
+- **Base de Datos:** Se eligió **Cloud Firestore** por su capacidad de escalado automático y alta disponibilidad (99.9%), ideal para inventarios de infraestructura.
+- **Seguridad:** Las reglas de seguridad están configuradas para permitir acceso público durante este periodo de evaluación.
+- **Tiempo de Implementación:** 3 horas.
 
 ---
 **Candidato:** [Tu Nombre]
 **Puesto:** Base de Datos / Infraestructura
-**Tiempo de implementación:** 3 horas

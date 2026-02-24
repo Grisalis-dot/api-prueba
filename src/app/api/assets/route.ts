@@ -3,6 +3,9 @@ import { initializeFirebase } from '@/firebase';
 import { collection, getDocs, addDoc, serverTimestamp, query, orderBy } from 'firebase/firestore';
 import { assetSchema } from '@/lib/validations/asset';
 
+/**
+ * Endpoint para obtener todos los activos.
+ */
 export async function GET() {
   try {
     const { firestore } = initializeFirebase();
@@ -18,10 +21,13 @@ export async function GET() {
 
     return NextResponse.json(assets);
   } catch (error) {
-    return NextResponse.json({ error: 'Error al obtener activos' }, { status: 500 });
+    return NextResponse.json({ error: 'Error al obtener activos de la base de datos' }, { status: 500 });
   }
 }
 
+/**
+ * Endpoint para crear un nuevo activo.
+ */
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -35,6 +41,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ id: docRef.id, ...validatedData }, { status: 201 });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+    return NextResponse.json({ error: error.message || 'Error al crear el activo' }, { status: 400 });
   }
 }
