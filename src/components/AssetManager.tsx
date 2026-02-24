@@ -41,24 +41,24 @@ export function AssetManager() {
     return (
       <div className="p-6 text-center border-2 border-destructive/20 rounded-xl bg-destructive/5 text-destructive">
         <p className="font-bold">Error de conexión</p>
-        <p className="text-sm opacity-80">No se pudieron cargar los activos. Por favor, verifica las reglas de seguridad.</p>
+        <p className="text-sm opacity-80">No se pudieron cargar los activos. Verifica la conexión a la base de datos.</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
         <div className="relative w-full sm:w-96">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input 
             placeholder="Buscar por título o marca..." 
-            className="pl-10"
+            className="pl-10 w-full"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <Button onClick={() => { setEditingAsset(null); setIsDialogOpen(true); }} className="bg-accent hover:bg-accent/90">
+        <Button onClick={() => { setEditingAsset(null); setIsDialogOpen(true); }} className="bg-accent hover:bg-accent/90 w-full sm:w-auto">
           <Plus className="h-4 w-4 mr-2" /> Nuevo Activo
         </Button>
       </div>
@@ -78,28 +78,28 @@ export function AssetManager() {
                      asset.titulo?.toLowerCase().includes('base') ? <Database className="h-5 w-5 text-accent" /> :
                      <Laptop className="h-5 w-5 text-accent" />}
                   </div>
-                  <Badge variant="outline" className="text-xs uppercase font-bold tracking-wider">{asset.marca}</Badge>
+                  <Badge variant="outline" className="text-[10px] uppercase font-bold tracking-wider">{asset.marca}</Badge>
                 </div>
-                <CardTitle className="mt-4 line-clamp-1">{asset.titulo}</CardTitle>
-                <CardDescription className="text-xs">
-                  ID: {asset.id?.substring(0, 8)}... • {asset.fecha_creacion?.toDate ? format(asset.fecha_creacion.toDate(), 'dd MMM yyyy') : 'Reciente'}
+                <CardTitle className="mt-4 text-lg line-clamp-1">{asset.titulo}</CardTitle>
+                <CardDescription className="text-[10px]">
+                  {asset.fecha_creacion?.toDate ? format(asset.fecha_creacion.toDate(), 'dd MMM yyyy') : 'Sincronizando...'}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground line-clamp-3">{asset.cuerpo}</p>
               </CardContent>
-              <CardFooter className="flex justify-end gap-2 pt-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button variant="ghost" size="icon" onClick={() => { setEditingAsset(asset); setIsDialogOpen(true); }}>
+              <CardFooter className="flex justify-end gap-2 pt-0 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => { setEditingAsset(asset); setIsDialogOpen(true); }}>
                   <Edit2 className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleDelete(asset.id)}>
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-destructive" onClick={() => handleDelete(asset.id)}>
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </CardFooter>
             </Card>
           )) : (
             <div className="col-span-full py-20 text-center text-muted-foreground border-2 border-dashed rounded-xl">
-              No se encontraron activos de IT.
+              {searchTerm ? 'No hay resultados para tu búsqueda.' : 'No se encontraron activos de IT.'}
             </div>
           )}
         </div>

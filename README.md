@@ -2,47 +2,38 @@
 
 Esta es una solución profesional para la gestión de activos de infraestructura IT, diseñada con una arquitectura moderna **Serverless Cloud Native**.
 
-## 🚀 Descripción de la Solución
-La aplicación permite administrar un inventario de activos tecnológicos (servidores, equipos, bases de datos, etc.) utilizando:
-- **Frontend:** Dashboard profesional con React, Shadcn/UI y Tailwind CSS.
-- **Backend:** Next.js API Routes.
-- **Base de Datos:** Cloud Firestore (Persistencia global NoSQL).
-- **Hosting:** Desplegado en **Vercel** (Optimizado para Next.js).
+## 🚀 Acceso Rápido
+- **URL del Dashboard (UI):** [INSERTAR_TU_URL_DE_VERCEL_AQUI]
+- **Endpoint Base:** `https://[TU_URL_DE_VERCEL]/api/assets`
 
 ---
 
-## 🛠 Guía para el Reclutador
+## 🛠 Guía de Pruebas (Paso a Paso)
 
-### 1. Acceso a la Interfaz (UI)
-Acceda al dashboard visual a través de la URL de despliegue de Vercel proporcionada.
-- **Funcionalidades:** Crear, editar, buscar y eliminar activos directamente desde la web.
-- **Dato Técnico:** El sistema utiliza **Firestore Realtime Updates**; los cambios se reflejan instantáneamente.
+### 1. Prueba de la Interfaz (Dashboard)
+1. Abre la URL en tu navegador (móvil o PC).
+2. Haz clic en **"Nuevo Activo"**.
+3. Ingresa: `Servidor de Base de Datos`, `Oracle`, `Instancia de producción crítica`.
+4. Verifica que la tarjeta aparezca instantáneamente con el icono de base de datos.
 
-### 2. Pruebas de la API REST (Endpoints)
-Utilice los siguientes endpoints para validar el requerimiento técnico vía Postman o cURL:
+### 2. Prueba de la API REST (Vía ReqBin / Postman)
+Si estás en tu celular, puedes usar [ReqBin.com](https://reqbin.com/) para probar los endpoints:
 
 | Método | Endpoint | Acción | Cuerpo (JSON) |
 |--------|----------|--------|---------------|
-| **GET** | `/api/assets` | Listar todos | N/A |
-| **POST** | `/api/assets` | Crear activo | `{"titulo": "Servidor Linux", "cuerpo": "Ubuntu 22.04", "marca": "Dell"}` |
-| **GET** | `/api/assets/{id}` | Ver detalle | N/A |
-| **PUT** | `/api/assets/{id}` | Actualizar | `{"titulo": "Update", "cuerpo": "...", "marca": "..."}` |
-| **DELETE** | `/api/assets/{id}` | Eliminar | N/A |
-
-### 3. Suite de Pruebas Automatizadas
-Se han implementado pruebas en `__tests__/api.test.ts` que validan los 5 escenarios solicitados:
-1. `POST`: Creación exitosa.
-2. `GET`: Listado correcto de la colección.
-3. `GET {id}`: Recuperación de un activo específico.
-4. `GET {error}`: Manejo de error 404 para IDs inexistentes.
-5. `DELETE`: Persistencia de la eliminación.
+| **POST** | `/api/assets` | Crear | `{"titulo": "API Test", "marca": "Cisco", "cuerpo": "Switch Catalyst 9300"}` |
+| **GET** | `/api/assets` | Listar | N/A |
+| **PUT** | `/api/assets/{id}` | Editar | `{"titulo": "Actualizado", "marca": "Cisco", "cuerpo": "Nuevos detalles"}` |
+| **DELETE** | `/api/assets/{id}` | Borrar | N/A |
 
 ---
 
 ## 🏗 Arquitectura e Infraestructura
-- **Base de Datos:** Se utiliza **Cloud Firestore** para garantizar alta disponibilidad y escalado automático.
-- **Seguridad:** Reglas de seguridad configuradas para permitir la evaluación técnica pública de la colección.
-- **Despliegue:** Cloud Hosting en Vercel con integración continua (CI/CD) desde GitHub.
+- **Frontend/Backend:** Next.js 15 (App Router).
+- **Base de Datos:** Cloud Firestore (NoSQL Real-time).
+- **Validación:** Zod (Esquemas de datos estrictos).
+- **Estilos:** Tailwind CSS + Shadcn/UI (Diseño responsivo).
+- **Hosting:** Vercel (CI/CD desde GitHub).
 
-**Candidato:** [Samuel Grisales Barrera]
+**Candidato:** [Tu Nombre]
 **Puesto:** Base de Datos / Infraestructura
