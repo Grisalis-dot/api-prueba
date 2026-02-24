@@ -44,5 +44,5 @@ Se han implementado pruebas en `__tests__/api.test.ts` que validan los 5 escenar
 - **Seguridad:** Reglas de seguridad configuradas para permitir la evaluación técnica pública de la colección.
 - **Despliegue:** Cloud Hosting en Vercel con integración continua (CI/CD) desde GitHub.
 
-**Candidato:** [Tu Nombre]
+**Candidato:** [Samuel Grisales Barrera]
 **Puesto:** Base de Datos / Infraestructura
