@@ -23,7 +23,7 @@ export function AssetManager() {
     return query(collection(db, 'assets'), orderBy('fecha_creacion', 'desc'));
   }, [db]);
 
-  const { data: assets, isLoading } = useCollection(assetsQuery);
+  const { data: assets, isLoading, error } = useCollection(assetsQuery);
 
   const handleDelete = (id: string) => {
     if (!confirm('¿Estás seguro de eliminar este activo?')) return;
@@ -36,6 +36,15 @@ export function AssetManager() {
     (a.titulo?.toLowerCase() || '').includes(searchTerm.toLowerCase()) || 
     (a.marca?.toLowerCase() || '').includes(searchTerm.toLowerCase())
   ) || [];
+
+  if (error) {
+    return (
+      <div className="p-6 text-center border-2 border-destructive/20 rounded-xl bg-destructive/5 text-destructive">
+        <p className="font-bold">Error de conexión</p>
+        <p className="text-sm opacity-80">No se pudieron cargar los activos. Por favor, verifica las reglas de seguridad.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
