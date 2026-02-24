@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useEffect } from 'react';
@@ -11,6 +10,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { useFirestore, addDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
+import { collection, doc, serverTimestamp } from 'firebase/firestore';
 
 interface AssetDialogProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ interface AssetDialogProps {
 
 export function AssetDialog({ isOpen, onClose, asset, onSuccess }: AssetDialogProps) {
   const { toast } = useToast();
+  const db = useFirestore();
   const form = useForm<AssetInput>({
     resolver: zodResolver(assetSchema),
     defaultValues: {
@@ -46,25 +48,23 @@ export function AssetDialog({ isOpen, onClose, asset, onSuccess }: AssetDialogPr
     }
   }, [asset, form, isOpen]);
 
-  const onSubmit = async (data: AssetInput) => {
+  const onSubmit = (data: AssetInput) => {
     try {
-      const url = asset ? `/api/assets/${asset.id}` : '/api/assets';
-      const method = asset ? 'PUT' : 'POST';
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-
-      if (res.ok) {
-        toast({ title: 'Éxito', description: `Activo ${asset ? 'actualizado' : 'creado'} correctamente.` });
-        onSuccess();
-        onClose();
+      if (asset) {
+        const docRef = doc(db, 'assets', asset.id);
+        updateDocumentNonBlocking(docRef, data);
+        toast({ title: 'Éxito', description: 'Activo actualizado correctamente.' });
       } else {
-        throw new Error('Error en el servidor');
+        const colRef = collection(db, 'assets');
+        addDocumentNonBlocking(colRef, {
+          ...data,
+          fecha_creacion: serverTimestamp()
+        });
+        toast({ title: 'Éxito', description: 'Activo creado correctamente.' });
       }
+      onClose();
     } catch (error) {
-      toast({ title: 'Error', description: 'Ocurrió un error al procesar la solicitud.', variant: 'destructive' });
+      toast({ title: 'Error', description: 'Ocurrió un error inesperado.', variant: 'destructive' });
     }
   };
 

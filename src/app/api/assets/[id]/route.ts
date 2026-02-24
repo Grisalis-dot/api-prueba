@@ -1,6 +1,6 @@
-
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { initializeFirebase } from '@/firebase';
+import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { assetSchema } from '@/lib/validations/asset';
 
 export async function GET(
@@ -8,17 +8,17 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const asset = await prisma.asset.findUnique({
-      where: { id: params.id },
-    });
+    const { firestore } = initializeFirebase();
+    const docRef = doc(firestore, 'assets', params.id);
+    const snapshot = await getDoc(docRef);
 
-    if (!asset) {
-      return NextResponse.json({ error: 'Asset not found' }, { status: 404 });
+    if (!snapshot.exists()) {
+      return NextResponse.json({ error: 'Activo no encontrado' }, { status: 404 });
     }
 
-    return NextResponse.json(asset);
+    return NextResponse.json({ id: snapshot.id, ...snapshot.data() });
   } catch (error) {
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ error: 'Error del servidor' }, { status: 500 });
   }
 }
 
@@ -29,21 +29,14 @@ export async function PUT(
   try {
     const body = await request.json();
     const validatedData = assetSchema.parse(body);
+    const { firestore } = initializeFirebase();
+    
+    const docRef = doc(firestore, 'assets', params.id);
+    await updateDoc(docRef, validatedData);
 
-    const asset = await prisma.asset.update({
-      where: { id: params.id },
-      data: validatedData,
-    });
-
-    return NextResponse.json(asset);
+    return NextResponse.json({ id: params.id, ...validatedData });
   } catch (error: any) {
-    if (error.code === 'P2025') {
-      return NextResponse.json({ error: 'Asset not found' }, { status: 404 });
-    }
-    if (error.name === 'ZodError') {
-      return NextResponse.json({ error: 'Validation Error', details: error.errors }, { status: 400 });
-    }
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ error: error.message }, { status: 400 });
   }
 }
 
@@ -52,15 +45,12 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    await prisma.asset.delete({
-      where: { id: params.id },
-    });
+    const { firestore } = initializeFirebase();
+    const docRef = doc(firestore, 'assets', params.id);
+    await deleteDoc(docRef);
 
     return new NextResponse(null, { status: 204 });
-  } catch (error: any) {
-    if (error.code === 'P2025') {
-      return NextResponse.json({ error: 'Asset not found' }, { status: 404 });
-    }
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json({ error: 'Error al eliminar' }, { status: 500 });
   }
 }

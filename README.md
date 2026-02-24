@@ -1,75 +1,55 @@
+# 🚀 IT Asset Management API - Prueba Técnica (Hosted)
 
-# 🚀 IT Asset Management API - Prueba Técnica
-
-Este proyecto es una solución integral para la gestión de activos de infraestructura IT, diseñada para cumplir con los requerimientos de una evaluación técnica para perfiles de Base de Datos e Infraestructura.
+Este proyecto es una solución integral para la gestión de activos de infraestructura IT, diseñada para cumplir con los requerimientos de una evaluación técnica senior de Base de Datos e Infraestructura.
 
 ## 📝 Descripción del Proyecto
-La aplicación permite administrar un inventario de activos tecnológicos (servidores, equipos, bases de datos, etc.). Implementa una arquitectura moderna con:
-- **Backend:** Next.js API Routes (Node.js).
-- **Base de Datos:** PostgreSQL con Prisma ORM.
+La aplicación permite administrar un inventario de activos tecnológicos (servidores, equipos, bases de datos, etc.). Implementa una arquitectura moderna **Serverless**:
 - **Frontend:** Dashboard profesional con React, Shadcn/UI y Tailwind CSS.
-- **Validación:** Esquemas de datos con Zod.
-
-## 🛠 Requerimientos Implementados
-- [x] **CRUD Completo:** Crear, Leer, Editar y Eliminar activos.
-- [x] **Campos obligatorios:** Título, Cuerpo y Marca.
-- [x] **Suite de Pruebas:** 5 pruebas de integración automatizadas.
-- [x] **Dockerizado:** Listo para despliegue consistente.
+- **Backend:** Next.js API Routes (para compatibilidad REST).
+- **Base de Datos:** Google Cloud Firestore (Base de datos en tiempo real y global).
+- **Hosting:** Firebase App Hosting.
 
 ---
 
-## 📖 Guía para el Reclutador (Cómo probar la API)
+## 📖 Guía para el Reclutador (Pruebas en Línea)
 
-### 1. Despliegue Local (Recomendado)
-La forma más sencilla de evaluar el proyecto es usando **Docker**:
-
-```bash
-docker-compose up --build
-```
-La aplicación estará disponible en `http://localhost:3000`.
+### 1. Acceso Directo (Producción)
+Puedes probar la aplicación directamente en la URL proporcionada en el despliegue de Firebase App Hosting.
 
 ### 2. Uso de la Interfaz (UI)
-- Al ingresar, verás el **Dashboard de Activos**.
-- Haz clic en **"Nuevo Activo"** para registrar uno.
-- Prueba la **barra de búsqueda** para filtrar por marca o título en tiempo real.
-- Las opciones de **Editar** y **Eliminar** aparecen al pasar el mouse sobre cada tarjeta.
+- **Gestión CRUD:** Crea, edita y elimina notas de activos en tiempo real.
+- **Barra de búsqueda:** Filtra instantáneamente por marca o título.
+- **Iconografía Dinámica:** El sistema detecta automáticamente si el activo es un Servidor o DB según el título.
 
 ### 3. Pruebas de la API (Endpoints REST)
-Si prefieres probar los endpoints directamente (vía Postman o cURL):
+Si deseas validar el requerimiento de la API directamente (vía Postman o cURL):
 
 | Método | Endpoint | Acción |
 |--------|----------|--------|
-| **GET** | `/api/assets` | Lista todos los activos en formato JSON. |
+| **GET** | `/api/assets` | Lista todos los activos en JSON. |
 | **POST** | `/api/assets` | Crea un activo. Body: `{"titulo": "...", "cuerpo": "...", "marca": "..."}` |
-| **GET** | `/api/assets/{id}` | Obtiene el detalle de un activo específico. |
+| **GET** | `/api/assets/{id}` | Obtiene el detalle de un activo. |
 | **PUT** | `/api/assets/{id}` | Actualiza un activo existente. |
-| **DELETE** | `/api/assets/{id}` | Elimina un activo del sistema. |
+| **DELETE** | `/api/assets/{id}` | Elimina un activo. |
 
 ---
 
 ## 🧪 Suite de Pruebas (5 Pruebas Requeridas)
-Se han implementado pruebas de integración que validan el flujo completo del servicio. Para ejecutarlas:
-
-1. Asegúrate de que el servidor esté corriendo.
-2. Ejecuta:
-```bash
-npm test
-```
-**Pruebas incluidas:**
+Se han implementado pruebas de integración automáticas en `__tests__/api.test.ts` que validan:
 1. `POST /assets`: Creación exitosa.
 2. `GET /assets`: Listado correcto de la colección.
 3. `GET /assets/{id}`: Recuperación de un activo específico.
-4. `GET /assets/{id}`: Validación de error 404 (activo inexistente).
-5. `DELETE /assets/{id}`: Eliminación exitosa y persistencia.
+4. `GET /assets/{id}`: Validación de error 404 (ID inexistente).
+5. `DELETE /assets/{id}`: Eliminación y verificación de persistencia.
 
 ---
 
-## ☁️ Instrucciones de Hosting
-Este servicio está optimizado para ser hosteado en:
-- **Railway / Render:** Solo necesitas conectar el repositorio y configurar la variable `DATABASE_URL` con tu instancia de PostgreSQL.
-- **Vercel:** Ideal para el frontend y las Serverless Functions de la API.
+## 🛠 Arquitectura e Infraestructura
+- **Seguridad:** Reglas de base de datos (`firestore.rules`) que garantizan la integridad.
+- **Escalabilidad:** Al ser Serverless, la infraestructura escala automáticamente de 0 a millones de peticiones.
+- **Persistencia:** Google Cloud garantiza 99.9% de disponibilidad.
 
 ---
 **Candidato:** [Tu Nombre]
 **Puesto:** Base de Datos / Infraestructura
-**Tiempo de implementación:** ~3 horas
+**Tiempo de implementación:** 3 horas

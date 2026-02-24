@@ -1,83 +1,26 @@
 {
   "entities": {
     "Asset": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Asset",
+      "description": "Representa un activo de IT o nota del sistema.",
       "type": "object",
-      "description": "Represents an IT asset, often referred to as a 'Nota' in the context of the application.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Asset entity."
-        },
-        "title": {
-          "type": "string",
-          "description": "The title or short description of the IT asset."
-        },
-        "body": {
-          "type": "string",
-          "description": "The main content or detailed description of the IT asset."
-        },
-        "brand": {
-          "type": "string",
-          "description": "The brand or manufacturer associated with the IT asset."
-        },
-        "creationDate": {
-          "type": "string",
-          "description": "The date and time when the IT asset record was created.",
-          "format": "date-time"
-        }
+        "id": { "type": "string" },
+        "titulo": { "type": "string" },
+        "cuerpo": { "type": "string" },
+        "marca": { "type": "string" },
+        "fecha_creacion": { "type": "string", "format": "date-time" }
       },
-      "required": [
-        "id",
-        "title",
-        "body",
-        "brand",
-        "creationDate"
-      ]
+      "required": ["titulo", "cuerpo", "marca"]
     }
   },
   "auth": {
-    "providers": [
-      "password",
-      "anonymous"
-    ]
+    "providers": ["anonymous"]
   },
   "firestore": {
-    "structure": [
-      {
-        "path": "/assets/{assetId}",
-        "definition": {
-          "entityName": "Asset",
-          "schema": {
-            "$ref": "#/backend/entities/Asset"
-          },
-          "description": "Primary storage for IT Asset entities. Each document represents a single IT asset with details such as title, body, brand, and creation date. This collection is designed for global access where security rules would typically grant read access to authenticated users and write access to designated administrators. No denormalized authorization fields are required within the asset document itself as ownership is not specified in the schema.",
-          "params": [
-            {
-              "name": "assetId",
-              "description": "Unique identifier for the Asset."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/roles_admin/{uid}",
-        "definition": {
-          "entityName": "User",
-          "schema": {
-            "$ref": "#/backend/entities/User"
-          },
-          "description": "Collection to store documents for users who have administrative privileges. The existence of a document at `/roles_admin/{uid}` signifies that the `uid` (user ID) is an administrator. This pattern enables Database Access Control (DBAC) by allowing security rules to check for document existence (e.g., `get(/databases/$(database)/documents/roles_admin/$(request.auth.uid)).exists()`) without relying on custom claims or complex hierarchical lookups, thus ensuring Authorization Independence.",
-          "params": [
-            {
-              "name": "uid",
-              "description": "The unique user ID (UID) of the administrator."
-            }
-          ]
-        }
-      }
-    ],
-    "reasoning": "The primary persistence layer for the application's core 'Asset' entity is specified as PostgreSQL, as detailed in the user's requirements. Therefore, the following Firestore structure is designed as if Firestore were the primary database for these entities, or for a scenario where Firestore serves as a secondary data store for metadata or authorization, aligning with the prompt's explicit request for a Firestore structure. \n\n**Authorization Independence:** The proposed structure for `/assets/{assetId}` ensures Authorization Independence by embedding all necessary authorization context (if any were required, such as 'ownerId' or 'members') directly within the `Asset` document. Since the `Asset` entity schema does not include explicit ownership or membership fields, access is designed to be either globally authenticated (read) or restricted to specific roles (write). For roles, the `/roles_admin/{uid}` collection provides a flat, independent mechanism for defining administrative access without requiring `get()` calls on parent documents or complex hierarchical checks in security rules. A user's admin status is determined solely by the existence of their `uid` in this collection, making authorization logic simple and atomic.\n\n**QAPs (Rules are not Filters):** Both collections are designed to enable Query As Permissions (QAPs). The `/assets` collection, if configured for authenticated reads, allows a `list` query to return all documents without requiring client-side filtering. Similarly, write operations are gated by explicit permissions derived from `/roles_admin`, ensuring that clients only attempt operations they are authorized to perform, thus avoiding server-side filtering of results due to insufficient permissions. The homogeneous security posture of each collection (all documents in `/assets` have similar access patterns; all documents in `/roles_admin` signify an admin role) further supports QAPs by simplifying security rules and making their intent clear."
+    "/assets/{assetId}": {
+      "schema": { "$ref": "#/entities/Asset" },
+      "description": "Colección principal de activos de IT."
+    }
   }
 }
