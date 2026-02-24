@@ -47,8 +47,8 @@ export default function Home() {
       {/* Footer */}
       <footer className="py-10 text-center text-muted-foreground border-t bg-white">
         <div className="container mx-auto px-4">
-          <p className="text-sm font-medium">Asset Management System v1.2.0 • Prueba Técnica Senior</p>
-          <p className="text-xs mt-2 opacity-60">Tech Stack: Next.js + Cloud Firestore + Firebase App Hosting</p>
+          <p className="text-sm font-medium">Asset Management System v1.2.5 • Prueba Técnica Senior</p>
+          <p className="text-xs mt-2 opacity-60">Tech Stack: Next.js + Cloud Firestore + Vercel Hosting</p>
         </div>
       </footer>
     </div>

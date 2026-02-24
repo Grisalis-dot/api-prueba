@@ -5,18 +5,18 @@ Esta es una solución profesional para la gestión de activos de infraestructura
 ## 🚀 Descripción de la Solución
 La aplicación permite administrar un inventario de activos tecnológicos (servidores, equipos, bases de datos, etc.) utilizando:
 - **Frontend:** Dashboard profesional con React, Shadcn/UI y Tailwind CSS.
-- **Backend:** Next.js API Routes (RESTful API).
-- **Base de Datos:** Cloud Firestore (Persistencia global NoSQL en tiempo real).
-- **Infraestructura:** Desplegado en **Firebase App Hosting**.
+- **Backend:** Next.js API Routes.
+- **Base de Datos:** Cloud Firestore (Persistencia global NoSQL).
+- **Hosting:** Desplegado en **Vercel** (Optimizado para Next.js).
 
 ---
 
 ## 🛠 Guía para el Reclutador
 
 ### 1. Acceso a la Interfaz (UI)
-Acceda al dashboard visual a través de la URL de despliegue proporcionada por el candidato.
+Acceda al dashboard visual a través de la URL de despliegue de Vercel proporcionada.
 - **Funcionalidades:** Crear, editar, buscar y eliminar activos directamente desde la web.
-- **Dato Técnico:** El sistema utiliza **Firestore Realtime Updates**; cualquier cambio se refleja instantáneamente sin recargar la página.
+- **Dato Técnico:** El sistema utiliza **Firestore Realtime Updates**; los cambios se reflejan instantáneamente.
 
 ### 2. Pruebas de la API REST (Endpoints)
 Utilice los siguientes endpoints para validar el requerimiento técnico vía Postman o cURL:
@@ -40,9 +40,9 @@ Se han implementado pruebas en `__tests__/api.test.ts` que validan los 5 escenar
 ---
 
 ## 🏗 Arquitectura e Infraestructura
-- **Base de Datos:** Se migró a **Cloud Firestore** para garantizar alta disponibilidad y escalado automático sin administración de servidores.
-- **Seguridad:** Configurada con reglas de seguridad granulares que permiten la evaluación pública de la colección de activos.
-- **Despliegue:** Utiliza **Firebase App Hosting**, optimizado para el renderizado híbrido de Next.js 15.
+- **Base de Datos:** Se utiliza **Cloud Firestore** para garantizar alta disponibilidad y escalado automático.
+- **Seguridad:** Reglas de seguridad configuradas para permitir la evaluación técnica pública de la colección.
+- **Despliegue:** Cloud Hosting en Vercel con integración continua (CI/CD) desde GitHub.
 
-**Candidato:** [Samuel Grisales Barrera]
+**Candidato:** [Tu Nombre]
 **Puesto:** Base de Datos / Infraestructura
