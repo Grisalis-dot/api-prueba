@@ -1,8 +1,8 @@
-# 🚀 IT Asset Management API - Prueba Técnica (Senior)
+#  IT Asset Management API - Prueba Técnica (Senior)
 
 Esta es una solución integral para la gestión de activos de infraestructura IT, diseñada para cumplir con los requerimientos de evaluación técnica.
 
-## 📝 Descripción
+##  Descripción
 La aplicación permite administrar un inventario de activos tecnológicos (servidores, equipos, bases de datos, etc.) utilizando una arquitectura **Serverless Cloud Native**:
 - **Frontend:** Dashboard profesional con React, Shadcn/UI y Tailwind CSS.
 - **Backend:** Next.js API Routes (RESTful API).
@@ -11,7 +11,7 @@ La aplicación permite administrar un inventario de activos tecnológicos (servi
 
 ---
 
-## 🛠 Guía para el Reclutador
+##  Guía para el Reclutador
 
 ### 1. Acceso a la Interfaz (UI)
 Acceda al dashboard visual a través de la URL de despliegue proporcionada.
@@ -39,7 +39,10 @@ Se han implementado pruebas automatizadas en `__tests__/api.test.ts` que validan
 
 ---
 
-## 🏗 Arquitectura e Infraestructura
+##  Arquitectura e Infraestructura
 - **Base de Datos:** Se eligió **Cloud Firestore** por su capacidad de escalado automático y alta disponibilidad (99.9%), eliminando la gestión de servidores tradicionales.
 - **Seguridad:** Configurada con reglas granulares para permitir la evaluación pública sin comprometer el resto del sistema.
 - **Hosting:** Utiliza **Firebase App Hosting**, optimizado para el renderizado híbrido de Next.js.
+
+
+Candidato: [Samuel Grisales Barrera] Puesto: Base de Datos / Infraestructura
