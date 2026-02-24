@@ -2,13 +2,13 @@
 
 Esta es una solución profesional para la gestión de activos de infraestructura IT, diseñada con una arquitectura moderna **Serverless Cloud Native**.
 
-## 🚀 Acceso Rápido
+##  Acceso Rápido
 - **URL del Dashboard (UI):** [INSERTAR_TU_URL_DE_VERCEL_AQUI]
 - **Endpoint Base:** `https://[TU_URL_DE_VERCEL]/api/assets`
 
 ---
 
-## 🛠 Guía de Pruebas (Paso a Paso)
+##  Guía de Pruebas (Paso a Paso)
 
 ### 1. Prueba de la Interfaz (Dashboard)
 1. Abre la URL en tu navegador (móvil o PC).
@@ -28,12 +28,13 @@ Si estás en tu celular, puedes usar [ReqBin.com](https://reqbin.com/) para prob
 
 ---
 
-## 🏗 Arquitectura e Infraestructura
+##  Arquitectura e Infraestructura
 - **Frontend/Backend:** Next.js 15 (App Router).
 - **Base de Datos:** Cloud Firestore (NoSQL Real-time).
 - **Validación:** Zod (Esquemas de datos estrictos).
 - **Estilos:** Tailwind CSS + Shadcn/UI (Diseño responsivo).
 - **Hosting:** Vercel (CI/CD desde GitHub).
 
-**Candidato:** [Tu Nombre]
+**Candidato:** [Samuel Grisales Barrera]
 **Puesto:** Base de Datos / Infraestructura
+ add .
